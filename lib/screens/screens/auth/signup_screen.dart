@@ -88,12 +88,12 @@ class _SignupScreenState extends State<SignupScreen> {
               onPressed: widget.onBackToLogin,
               icon: Icon(
                 Icons.arrow_back,
-                color: Colors.white.withOpacity(0.6),
+                color: Colors.white.withValues(alpha: 0.6),
               ),
               label: Text(
                 'Back to Login',
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -114,7 +114,7 @@ class _SignupScreenState extends State<SignupScreen> {
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 32),
@@ -164,7 +164,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                       onPressed: () {
                         setState(() => _obscurePassword = !_obscurePassword);

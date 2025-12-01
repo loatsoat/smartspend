@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: const Icon(
@@ -85,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFF00F5FF).withOpacity(0.4),
+                  color: const Color(0xFF00F5FF).withValues(alpha: 0.4),
                   blurRadius: 40,
                   spreadRadius: 0,
                 ),
@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Full SmartSpend features coming soon!',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 32),
@@ -122,12 +122,12 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.circular(24),
               gradient: LinearGradient(
                 colors: [
-                  const Color(0xFF395587).withOpacity(0.3),
-                  const Color(0xFF4a6aa0).withOpacity(0.2),
+                  const Color(0xFF395587).withValues(alpha: 0.3),
+                  const Color(0xFF4a6aa0).withValues(alpha: 0.2),
                 ],
               ),
               border: Border.all(
-                color: Colors.white.withOpacity(0.2),
+                color: Colors.white.withValues(alpha: 0.2),
               ),
             ),
             child: Column(
@@ -145,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   'Total Balance',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.6),
+                    color: Colors.white.withValues(alpha: 0.6),
                   ),
                 ),
               ],
@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFFF6B9D).withOpacity(0.4),
+                  color: const Color(0xFFFF6B9D).withValues(alpha: 0.4),
                   blurRadius: 40,
                   spreadRadius: 0,
                 ),
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Budget management features',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
         ],
@@ -212,13 +212,13 @@ class _HomeScreenState extends State<HomeScreen> {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            const Color(0xFF1A1F33).withOpacity(0.95),
-            const Color(0xFF0A0E1A).withOpacity(0.98),
+            const Color(0xFF1A1F33).withValues(alpha: 0.95),
+            const Color(0xFF0A0E1A).withValues(alpha: 0.98),
           ],
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -273,7 +273,7 @@ class _HomeScreenState extends State<HomeScreen> {
           boxShadow: isActive
               ? [
                   BoxShadow(
-                    color: (gradient.colors.first as Color).withOpacity(0.4),
+                    color: gradient.colors.first.withValues(alpha: 0.4),
                     blurRadius: 20,
                     spreadRadius: 0,
                   ),

@@ -97,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: const Color(0xFF395587).withOpacity(0.4 + _pulseAnimation.value * 0.2),
+                      color: const Color(0xFF395587).withValues(alpha: 0.4 + _pulseAnimation.value * 0.2),
                       blurRadius: 40 + _pulseAnimation.value * 20,
                       spreadRadius: 0,
                     ),
@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
             'Welcome back!',
             style: TextStyle(
               fontSize: 16,
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(height: 40),
@@ -162,7 +162,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                        color: Colors.white.withOpacity(0.4),
+                        color: Colors.white.withValues(alpha: 0.4),
                       ),
                       onPressed: () {
                         setState(() => _obscurePassword = !_obscurePassword);
@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               Text(
                 "Don't have an account? ",
                 style: TextStyle(
-                  color: Colors.white.withOpacity(0.6),
+                  color: Colors.white.withValues(alpha: 0.6),
                   fontSize: 14,
                 ),
               ),
