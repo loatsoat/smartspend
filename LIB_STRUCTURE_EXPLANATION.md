@@ -18,25 +18,69 @@ This is a **SmartSpend Budget Tracking App** built with Flutter. It features aut
 
 ---
 
-### **Main App**
+### **📊 Models** (NEW - Refactored!)
 
-#### `lib/app_budget.dart`
-**Purpose:** Core budget tracking application
+#### `lib/models/budget_models.dart`
+**Purpose:** Data models for the budget app
+**Contains:**
+- `Transaction` - Transaction data model with type, amount, category, date
+- `TransactionType` enum - expense, income, transfer
+- `CategoryData` - Category configuration with colors, icons, subcategories
+- `SubcategoryBudget` - Budget tracking for subcategories
+- `defaultCategories` - Predefined categories (Housing, Food, Savings, Income)
+
+---
+
+### **Main Budget App**
+
+#### `lib/screens/screens/budget/app_budget.dart`
+**Purpose:** Main budget tracking screen (REFACTORED - Now much cleaner!)
 **Features:**
 - **Transaction Management:** Add, view, and categorize expenses/income
 - **Budget Tracking:** Set budgets per category and subcategory
-- **Category System:** Predefined categories (Housing, Food, Savings, Income) with icons and colors
 - **Visual Budget Display:** Circular progress chart showing budget usage
 - **Animated UI:** Smooth transitions and glassmorphic design
 - **Tab Navigation:** Overview and Budget tabs
 
-**Key Components:**
-- `Transaction` model - stores transaction data
-- `CategoryData` model - defines category properties
-- `SubcategoryBudget` model - tracks budgeted vs spent amounts
-- Budget calculations and percentage tracking
-- Expandable category cards with subcategory details
-- Edit mode for updating budgets
+**Now uses modular widgets from:**
+- `widgets/budget_header.dart` - Status bar and header
+- `widgets/circular_budget_chart.dart` - Budget visualization
+- `widgets/category_card.dart` - Category display cards
+- `widgets/bottom_navigation.dart` - Tab navigation
+- `widgets/budget_animated_background.dart` - Animated background
+
+---
+
+### **🎨 Budget Widgets** (NEW - Extracted for better organization!)
+
+#### `lib/screens/screens/budget/widgets/budget_header.dart`
+**Components:**
+- `BudgetStatusBar` - Shows time, date, and battery status
+- `BudgetHeader` - App title with settings and edit buttons
+
+#### `lib/screens/screens/budget/widgets/circular_budget_chart.dart`
+**Component:** `CircularBudgetChart`
+- Displays circular progress indicator for budget usage
+- Shows budget left, total budget, and spent amount
+- Color-coded based on usage percentage
+
+#### `lib/screens/screens/budget/widgets/category_card.dart`
+**Component:** `CategoryCard`
+- Expandable category cards with icon and gradient
+- Shows total spent vs budgeted
+- Displays subcategories when expanded
+- Edit mode support
+
+#### `lib/screens/screens/budget/widgets/bottom_navigation.dart`
+**Component:** `BudgetBottomNavigation`
+- Tab navigation between Overview and Budget
+- Animated gradient effects
+- Active tab highlighting
+
+#### `lib/screens/screens/budget/widgets/budget_animated_background.dart`
+**Component:** `BudgetAnimatedBackground`
+- Rotating gradient orbs
+- Smooth animations for visual depth
 
 ---
 

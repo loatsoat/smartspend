@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'themes/app_theme.dart';
-import 'app_budget.dart';
+import 'screens/screens/budget/app_budget.dart';
 
 void main() {
   runApp(const HCIApp());

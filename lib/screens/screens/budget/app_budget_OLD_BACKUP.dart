@@ -177,7 +177,27 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
 
   // Calculations
   double get totalBudget => 1000;
-  double get totalSpent => 240;
+  
+  double get totalSpent {
+    double spent = 0;
+    categoryBudgets.forEach((_, subcats) {
+      subcats.forEach((_, budget) {
+        spent += budget.spent;
+      });
+    });
+    return spent;
+  }
+  
+  double get totalCategoryBudgets {
+    double total = 0;
+    categoryBudgets.forEach((_, subcats) {
+      subcats.forEach((_, budget) {
+        total += budget.budgeted;
+      });
+    });
+    return total;
+  }
+  
   double get budgetLeft => totalBudget - totalSpent;
   double get budgetPercentage => (totalSpent / totalBudget) * 100;
 
@@ -546,13 +566,45 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Categories',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Categories',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '€${totalCategoryBudgets.toStringAsFixed(0)} / €${totalBudget.toStringAsFixed(0)} budgeted',
+                  style: const TextStyle(
+                    color: Color(0xFF00F5FF),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+            if (isEditingBudgets)
+              IconButton(
+                icon: const Icon(
+                  Icons.add_circle_outline,
+                  color: Color(0xFF00F5FF),
+                  size: 24,
+                ),
+                onPressed: () {
+                  _showManageCategoriesDialog();
+                },
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+              ),
+          ],
         ),
         const SizedBox(height: 16),
         ...categoryBudgets.entries.map((entry) {
@@ -675,7 +727,7 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
                       ],
                     ),
                   ),
-                  // Progress and expand icon
+                  // Progress and actions
                   Column(
                     children: [
                       Text(
@@ -687,10 +739,25 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Icon(
-                        isExpanded ? Icons.expand_less : Icons.expand_more,
-                        color: Colors.white70,
-                      ),
+                      if (isEditingBudgets)
+                        IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                            color: categoryData.solidColor,
+                            size: 20,
+                          ),
+                          onPressed: () => _showEditCategoryDialog(
+                            categoryKey,
+                            categoryData,
+                          ),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                        )
+                      else
+                        Icon(
+                          isExpanded ? Icons.expand_less : Icons.expand_more,
+                          color: Colors.white70,
+                        ),
                     ],
                   ),
                 ],
@@ -1165,27 +1232,663 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
   void _enterEditMode() {
     tempBudgetValues.clear();
     isEditingBudgets = true;
+    setState(() {});
   }
 
   void _saveAllBudgets() {
-    // Save budget changes
     tempBudgetValues.forEach((key, value) {
       final amount = double.tryParse(value);
       if (amount != null) {
-        // Update the budget in categoryBudgets
-        // This is a simplified implementation
-        // Save budget for $key: €$amount
         debugPrint('Saving budget for $key: €$amount');
       }
     });
 
     tempBudgetValues.clear();
     isEditingBudgets = false;
+    setState(() {});
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Budgets saved successfully!'),
         backgroundColor: Color(0xFF00F5FF),
+      ),
+    );
+  }
+
+  void _showEditCategoryDialog(String categoryKey, CategoryData categoryData) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: Text(
+          'Edit ${categoryData.name}',
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Existing subcategories
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Subcategories',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+              ),
+              const SizedBox(height: 8),
+              if (categoryBudgets.containsKey(categoryKey))
+                ...categoryBudgets[categoryKey]!.entries.map((entry) {
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: categoryData.solidColor.withValues(alpha: 0.3),
+                      ),
+                      color: Colors.white.withValues(alpha: 0.05),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                entry.key,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              Text(
+                                '€${entry.value.budgeted.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  color: categoryData.solidColor,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                          onPressed: () {
+                            final budgetController = TextEditingController(
+                              text: entry.value.budgeted.toStringAsFixed(0),
+                            );
+                            final nameController = TextEditingController(
+                              text: entry.key,
+                            );
+                            _showEditSubcategoryDialog(
+                              categoryKey,
+                              entry.key,
+                              budgetController,
+                              nameController,
+                              categoryData,
+                            );
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                          onPressed: () {
+                            setState(() {
+                              categoryBudgets[categoryKey]?.remove(entry.key);
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: categoryData.solidColor,
+            ),
+            onPressed: () {
+              _showAddSubcategoryDialog(categoryKey, categoryData);
+            },
+            child: const Text('Add Subcategory'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddSubcategoryDialog(
+    String categoryKey,
+    CategoryData categoryData,
+  ) {
+    final subcategoryController = TextEditingController();
+    final budgetController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: const Text(
+          'Add New Subcategory',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: subcategoryController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Subcategory name',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Name',
+                labelStyle: TextStyle(color: categoryData.solidColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: budgetController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Budget amount',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Budget',
+                labelStyle: TextStyle(color: categoryData.solidColor),
+                prefixText: '€ ',
+                prefixStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: categoryData.solidColor,
+            ),
+            onPressed: () {
+              if (subcategoryController.text.isNotEmpty &&
+                  budgetController.text.isNotEmpty) {
+                final budget = double.tryParse(budgetController.text) ?? 0;
+                setState(() {
+                  if (!categoryBudgets.containsKey(categoryKey)) {
+                    categoryBudgets[categoryKey] = {};
+                  }
+                  categoryBudgets[categoryKey]![subcategoryController.text] =
+                      SubcategoryBudget(budgeted: budget, spent: 0);
+                });
+                Navigator.pop(context);
+                Navigator.pop(context); // Close the edit dialog too
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditSubcategoryDialog(
+    String categoryKey,
+    String oldName,
+    TextEditingController budgetController,
+    TextEditingController nameController,
+    CategoryData categoryData,
+  ) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: const Text(
+          'Edit Subcategory',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Subcategory name',
+                hintStyle: const TextStyle(color: Colors.white54),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: budgetController,
+              style: const TextStyle(color: Colors.white),
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hintText: 'Budget amount',
+                hintStyle: const TextStyle(color: Colors.white54),
+                prefixText: '€ ',
+                prefixStyle: const TextStyle(color: Colors.white70),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: categoryData.solidColor,
+            ),
+            onPressed: () {
+              final newBudget = double.tryParse(budgetController.text) ?? 0;
+              setState(() {
+                if (nameController.text != oldName) {
+                  final oldBudget = categoryBudgets[categoryKey]![oldName];
+                  categoryBudgets[categoryKey]?.remove(oldName);
+                  categoryBudgets[categoryKey]![nameController.text] =
+                      SubcategoryBudget(
+                    budgeted: newBudget,
+                    spent: oldBudget?.spent ?? 0,
+                  );
+                } else {
+                  categoryBudgets[categoryKey]![oldName] = SubcategoryBudget(
+                    budgeted: newBudget,
+                    spent: categoryBudgets[categoryKey]![oldName]?.spent ?? 0,
+                  );
+                }
+              });
+              Navigator.pop(context);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showManageCategoriesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: const Text(
+          'Manage Categories',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Existing categories
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Your Categories',
+                  style: TextStyle(color: Colors.white70, fontSize: 12),
+                ),
+              ),
+              const SizedBox(height: 12),
+              ...categoryBudgets.entries.map((entry) {
+                final categoryKey = entry.key;
+                final categoryData = categories[categoryKey];
+
+                if (categoryData == null) return const SizedBox.shrink();
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: categoryData.solidColor.withValues(alpha: 0.3),
+                    ),
+                    color: Colors.white.withValues(alpha: 0.05),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: LinearGradient(
+                            colors: categoryData.gradientColors,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(categoryData.icon, style: const TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              categoryData.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '${entry.value.length} subcategories',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _showEditCategoryNameDialog(categoryKey, categoryData);
+                        },
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                        onPressed: () {
+                          setState(() {
+                            categoryBudgets.remove(categoryKey);
+                          });
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                '${categoryData.name} and all its subcategories deleted',
+                              ),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Close', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00F5FF),
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+              _showAddNewCategoryDialog();
+            },
+            child: const Text('Add Category'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showEditCategoryNameDialog(String categoryKey, CategoryData categoryData) {
+    final nameController = TextEditingController(text: categoryData.name);
+    final iconController = TextEditingController(text: categoryData.icon);
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: const Text(
+          'Edit Category',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Category name',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Name',
+                labelStyle: TextStyle(color: categoryData.solidColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: iconController,
+              style: const TextStyle(color: Colors.white, fontSize: 24),
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              decoration: InputDecoration(
+                hintText: 'Pick an emoji',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Icon',
+                labelStyle: TextStyle(color: categoryData.solidColor),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor.withValues(alpha: 0.3),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide(
+                    color: categoryData.solidColor,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: categoryData.solidColor,
+            ),
+            onPressed: () {
+              if (nameController.text.isNotEmpty) {
+                setState(() {
+                  final updatedCategory = CategoryData(
+                    name: nameController.text,
+                    gradientColors: categoryData.gradientColors,
+                    solidColor: categoryData.solidColor,
+                    glowColor: categoryData.glowColor,
+                    icon: iconController.text.isNotEmpty ? iconController.text : categoryData.icon,
+                    subcategories: categoryData.subcategories,
+                  );
+                  categories[categoryKey] = updatedCategory;
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Category updated successfully!'),
+                    backgroundColor: Color(0xFF00F5FF),
+                  ),
+                );
+              }
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showAddNewCategoryDialog() {
+    final nameController = TextEditingController();
+    final iconController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1A1F3A),
+        title: const Text(
+          'Add New Category',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              style: const TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                hintText: 'Category name',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Name',
+                labelStyle: const TextStyle(color: Color(0xFF00F5FF)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF00F5FF),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(
+                    color: Color(0xFF00F5FF),
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: iconController,
+              style: const TextStyle(color: Colors.white, fontSize: 24),
+              textAlign: TextAlign.center,
+              maxLength: 1,
+              decoration: InputDecoration(
+                hintText: 'Pick an emoji',
+                hintStyle: const TextStyle(color: Colors.white54),
+                labelText: 'Icon',
+                labelStyle: const TextStyle(color: Color(0xFF00F5FF)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: const BorderSide(
+                    color: Color(0xFF00F5FF),
+                  ),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  borderSide: BorderSide(
+                    color: Color(0xFF00F5FF),
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF00F5FF),
+            ),
+            onPressed: () {
+              if (nameController.text.isNotEmpty && iconController.text.isNotEmpty) {
+                setState(() {
+                  final newKey = nameController.text.toLowerCase().replaceAll(' ', '_');
+                  categories[newKey] = CategoryData(
+                    name: nameController.text,
+                    gradientColors: [
+                      const Color(0xFF00F5FF),
+                      const Color(0xFF00D4FF),
+                      const Color(0xFF00B8FF),
+                    ],
+                    solidColor: const Color(0xFF00F5FF),
+                    glowColor: const Color(0xFF00F5FF).withValues(alpha: 0.6),
+                    icon: iconController.text,
+                    subcategories: [],
+                  );
+                  categoryBudgets[newKey] = {};
+                });
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('New category added successfully!'),
+                    backgroundColor: Color(0xFF00F5FF),
+                  ),
+                );
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
       ),
     );
   }
