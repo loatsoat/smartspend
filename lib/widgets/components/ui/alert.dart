@@ -40,7 +40,7 @@ class CustomAlert extends StatelessWidget {
       case AlertVariant.destructive:
         backgroundColor = theme.cardColor;
         textColor = Colors.red;
-        borderColor = Colors.red.withOpacity(0.3);
+        borderColor = Colors.red.withValues();
         break;
     }
 

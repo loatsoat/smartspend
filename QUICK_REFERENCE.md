@@ -160,7 +160,7 @@ import 'widgets/budget_header.dart';
 ✅ Verify parameters are being passed correctly
 
 ### **Colors Not Showing**
-✅ Use `.withValues(alpha: ...)` instead of `.withOpacity()`
+✅ Use `.withValues(alpha: ...)` instead of `.withValues()`
 ✅ Check if gradient colors are defined correctly
 
 ### **Animation Not Working**

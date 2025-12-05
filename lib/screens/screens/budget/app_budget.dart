@@ -5,6 +5,7 @@ import 'widgets/circular_budget_chart.dart';
 import 'widgets/category_card.dart';
 import 'widgets/bottom_navigation.dart';
 import 'widgets/budget_animated_background.dart';
+import 'category_manager.dart';
 
 class BudgetApp extends StatefulWidget {
   const BudgetApp({super.key});
@@ -574,20 +575,23 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
   }
 
   void _showEditCategoryDialog(String categoryKey, CategoryData categoryData) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Edit ${categoryData.name} - Coming soon!'),
-        backgroundColor: categoryData.solidColor,
-      ),
+    showEditCategoryDialog(
+      context,
+      categories,
+      categoryKey,
+      categoryData,
+      categoryBudgets,
+      () => setState(() {}),
     );
   }
 
   void _showManageCategoriesDialog() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Manage categories - Coming soon!'),
-        backgroundColor: Color(0xFF00F5FF),
-      ),
+    showManageCategoriesDialog(
+      context,
+      categories,
+      categoryBudgets,
+      (key, data) => _showEditCategoryDialog(key, data),
+      () => setState(() {}),
     );
   }
 }

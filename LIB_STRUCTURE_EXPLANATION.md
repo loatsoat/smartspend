@@ -265,4 +265,4 @@ This is a **SmartSpend Budget Tracking App** built with Flutter. It features aut
 
 ## ✨ All Errors Fixed!
 
-All deprecated `.withOpacity()` calls have been replaced with `.withValues(alpha: ...)` for Flutter 3.27+ compatibility.
+All deprecated `.withValues()` calls have been replaced with `.withValues(alpha: ...)` for Flutter 3.27+ compatibility.
