@@ -27,7 +27,7 @@ class CustomSwitch extends StatelessWidget {
     Widget switchWidget = Switch(
       value: value,
       onChanged: enabled ? onChanged : null,
-      activeColor: activeColor ?? theme.primaryColor,
+      activeThumbColor: activeColor ?? theme.primaryColor,
       inactiveThumbColor: inactiveColor ?? Colors.white,
       inactiveTrackColor: const Color(0xFFCBCED4),
     );
@@ -41,7 +41,7 @@ class CustomSwitch extends StatelessWidget {
             style: labelStyle ?? theme.textTheme.bodyMedium?.copyWith(
               color: enabled 
                   ? theme.colorScheme.onSurface 
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(width: 12),

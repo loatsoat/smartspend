@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../models/budget_models.dart';
+import '../../../../widgets/components/ui/badge.dart';
 
 class CategoryCard extends StatelessWidget {
   final String categoryKey;
@@ -121,13 +122,13 @@ class CategoryCard extends StatelessWidget {
                   // Progress and actions
                   Column(
                     children: [
-                      Text(
-                        '${percentage.toStringAsFixed(0)}%',
-                        style: TextStyle(
-                          color: percentage > 90 ? Colors.red : Colors.white70,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      CustomBadge(
+                        text: '${percentage.toStringAsFixed(0)}%',
+                        variant: percentage > 90 
+                            ? BadgeVariant.destructive 
+                            : percentage > 75 
+                                ? BadgeVariant.secondary 
+                                : BadgeVariant.primary,
                       ),
                       const SizedBox(height: 8),
                       if (isEditingBudgets)

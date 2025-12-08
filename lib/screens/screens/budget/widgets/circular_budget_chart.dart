@@ -5,6 +5,7 @@ class CircularBudgetChart extends StatelessWidget {
   final double totalSpent;
   final double budgetLeft;
   final double budgetPercentage;
+  final VoidCallback? onBudgetTap; // ADD THIS
 
   const CircularBudgetChart({
     super.key,
@@ -12,6 +13,7 @@ class CircularBudgetChart extends StatelessWidget {
     required this.totalSpent,
     required this.budgetLeft,
     required this.budgetPercentage,
+    this.onBudgetTap, // ADD THIS
   });
 
   @override
@@ -21,18 +23,21 @@ class CircularBudgetChart extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
-          color: const Color(0xFF00F5FF).withValues(alpha: 0.3),
+          color: const Color(0xFF00F5FF).withOpacity(0.3),
         ),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [Color(0xFF1A1F3A), Color(0xFF2A2F4A), Color(0xFF1A1F3A)],
+          colors: [
+            Color(0xFF1A1F3A),
+            Color(0xFF2A2F4A),
+          ],
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00F5FF).withValues(alpha: 0.2),
-            blurRadius: 30,
-            offset: const Offset(0, 8),
+            color: const Color(0xFF00F5FF).withOpacity(0.1),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -109,12 +114,13 @@ class CircularBudgetChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildBudgetSummaryItem(
+              _buildSummaryItem(
                 'Budget',
                 '€${totalBudget.toStringAsFixed(0)}',
                 const Color(0xFF00F5FF),
+                onTap: onBudgetTap, // ADD THIS PARAMETER
               ),
-              _buildBudgetSummaryItem(
+              _buildSummaryItem(
                 'Spent',
                 '€${totalSpent.toStringAsFixed(0)}',
                 const Color(0xFFFF6B9D),
@@ -126,22 +132,58 @@ class CircularBudgetChart extends StatelessWidget {
     );
   }
 
-  Widget _buildBudgetSummaryItem(String label, String value, Color color) {
-    return Column(
+  Widget _buildSummaryItem(
+    String label,
+    String value,
+    Color color, {
+    VoidCallback? onTap,
+  }) {
+    final content = Column(
       children: [
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              value,
+              style: TextStyle(
+                color: color,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (onTap != null) ...[
+              const SizedBox(width: 4),
+              Icon(
+                Icons.edit,
+                color: color.withOpacity(0.7),
+                size: 16,
+              ),
+            ],
+          ],
         ),
+        const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
+          style: const TextStyle(
+            color: Colors.white70,
+            fontSize: 12,
+          ),
         ),
       ],
     );
+
+    if (onTap != null) {
+      return MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            child: content,
+          ),
+        ),
+      );
+    }
+    return content;
   }
 }

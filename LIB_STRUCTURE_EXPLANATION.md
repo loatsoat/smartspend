@@ -1,7 +1,7 @@
-# Flutter App Structure Explanation
+# Flutter App Structure 
 
-## 📁 Project Overview
-This is a **SmartSpend Budget Tracking App** built with Flutter. It features authentication, budget management, transaction tracking, and a beautiful glassmorphic UI with animated backgrounds.
+## Project Overview
+**SmartSpend Budget Tracking App** is built with Flutter. It features authentication, budget management, transaction tracking.
 
 ---
 
@@ -18,7 +18,7 @@ This is a **SmartSpend Budget Tracking App** built with Flutter. It features aut
 
 ---
 
-### **📊 Models** (NEW - Refactored!)
+### **📊 Models** 
 
 #### `lib/models/budget_models.dart`
 **Purpose:** Data models for the budget app

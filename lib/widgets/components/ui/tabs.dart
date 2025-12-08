@@ -58,7 +58,7 @@ class _CustomTabsState extends State<CustomTabs>
         Container(
           padding: widget.padding ?? const EdgeInsets.all(3),
           decoration: BoxDecoration(
-            color: theme.colorScheme.secondary.withOpacity(0.1),
+            color: theme.colorScheme.secondary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
           child: TabBar(
@@ -74,7 +74,7 @@ class _CustomTabsState extends State<CustomTabs>
             indicatorSize: TabBarIndicatorSize.tab,
             labelColor: widget.labelColor ?? theme.colorScheme.onSurface,
             unselectedLabelColor: widget.unselectedLabelColor ?? 
-                theme.colorScheme.onSurface.withOpacity(0.6),
+                theme.colorScheme.onSurface.withValues(alpha: 0.6),
             labelStyle: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: FontWeight.w500,
             ),
@@ -153,7 +153,7 @@ class SimpleTabs extends StatelessWidget {
                           data: IconThemeData(
                             color: isSelected 
                                 ? theme.primaryColor 
-                                : theme.colorScheme.onSurface.withOpacity(0.6),
+                                : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           ),
                           child: tab.icon!,
                         ),
@@ -164,7 +164,7 @@ class SimpleTabs extends StatelessWidget {
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: isSelected 
                               ? theme.primaryColor 
-                              : theme.colorScheme.onSurface.withOpacity(0.6),
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                           fontWeight: isSelected 
                               ? FontWeight.w600 
                               : FontWeight.normal,

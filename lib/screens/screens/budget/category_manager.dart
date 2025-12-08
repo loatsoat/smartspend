@@ -31,12 +31,12 @@ Future<void> showManageCategoriesDialog(
                   height: 36,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: cd.solidColor.withOpacity(0.15),
+                    color: cd.solidColor.withValues(alpha:0.15),
                   ),
                   child: Center(child: Text(cd.icon)),
                 ),
                 title: Text(cd.name, style: const TextStyle(color: Colors.white)),
-                subtitle: Text('$count subcategories', style: TextStyle(color: Colors.white.withOpacity(0.6))),
+                subtitle: Text('$count subcategories', style: TextStyle(color: Colors.white.withValues(alpha: 0.6))),
                 onTap: () {
                   Navigator.pop(context);
                   onEditCategory(k, cd);
@@ -53,7 +53,7 @@ Future<void> showManageCategoriesDialog(
                               title: Text('Delete ${cd.name}?', style: const TextStyle(color: Colors.white)),
                               content: Text(
                                 'This will remove the category and all its subcategories.',
-                                style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                                style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                               ),
                               actions: [
                                 TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Cancel', style: TextStyle(color: Colors.white70))),
@@ -65,13 +65,13 @@ Future<void> showManageCategoriesDialog(
                               ],
                             ),
                           );
-                          if (confirm == true) {
+                          if (confirm == true && context.mounted) {
                             categories.remove(k);
                             categoryBudgets.remove(k);
                             onChanged();
-                            Navigator.pop(context); // close manage dialog
+                            if (context.mounted) Navigator.pop(context); // close manage dialog
                             // reopen to show updated list
-                            await showManageCategoriesDialog(context, categories, categoryBudgets, onEditCategory, onChanged);
+                            if (context.mounted) await showManageCategoriesDialog(context, categories, categoryBudgets, onEditCategory, onChanged);
                           }
                         },
                       ),
@@ -124,7 +124,7 @@ Future<void> showEditCategoryDialog(
             if (subcats.isEmpty)
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text('No subcategories yet.', style: TextStyle(color: Colors.white.withOpacity(0.6))),
+                child: Text('No subcategories yet.', style: TextStyle(color: Colors.white.withValues(alpha: 0.6))),
               )
             else
               ...subcats.entries.map((e) {
@@ -163,7 +163,7 @@ Future<void> showEditCategoryDialog(
                     ],
                   ),
                 );
-              }).toList(),
+              }),
             const SizedBox(height: 8),
             ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: categoryData.solidColor),
@@ -245,14 +245,14 @@ Future<void> showAddCategoryDialog(
             var newKey = key;
             var i = 1;
             while (categories.containsKey(newKey)) {
-              newKey = '$key\_$i';
+              newKey = '${key}_$i';
               i++;
             }
             categories[newKey] = CategoryData(
               name: name,
               gradientColors: [const Color(0xFF00F5FF), const Color(0xFF00D4FF)],
               solidColor: const Color(0xFF00F5FF),
-              glowColor: const Color(0xFF00F5FF).withOpacity(0.6),
+              glowColor: const Color(0xFF00F5FF).withValues(alpha: 0.6),
               icon: emoji,
               subcategories: [],
             );
@@ -330,6 +330,49 @@ Future<void> showAddOrEditSubcategoryDialog(
               map[name] = SubcategoryBudget(budgeted: budget, spent: map[initialName]?.spent ?? 0);
             }
             onSaved();
+            Navigator.pop(context);
+          },
+          child: const Text('Save'),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Dialog to edit the overall budget amount
+Future<void> showEditBudgetDialog(
+  BuildContext context,
+  double currentBudget,
+  void Function(double newBudget) onSaved,
+) {
+  final ctrl = TextEditingController(text: currentBudget.toStringAsFixed(0));
+  return showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF1A1F3A),
+      title: const Text('Edit Total Budget', style: TextStyle(color: Colors.white)),
+      content: TextField(
+        controller: ctrl,
+        style: const TextStyle(color: Colors.white),
+        keyboardType: TextInputType.number,
+        decoration: InputDecoration(
+          hintText: 'Budget (€)',
+          hintStyle: const TextStyle(color: Colors.white54),
+          filled: true,
+          fillColor: const Color(0xFF2A2F4A),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel', style: TextStyle(color: Colors.white70)),
+        ),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF00F5FF)),
+          onPressed: () {
+            final newBudget = double.tryParse(ctrl.text) ?? currentBudget;
+            onSaved(newBudget);
             Navigator.pop(context);
           },
           child: const Text('Save'),

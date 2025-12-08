@@ -28,7 +28,7 @@ class CustomProgress extends StatelessWidget {
     Widget progressBar = Container(
       height: height ?? 8,
       decoration: BoxDecoration(
-        color: backgroundColor ?? theme.primaryColor.withOpacity(0.2),
+        color: backgroundColor ?? theme.primaryColor.withValues(alpha: 0.2),
         borderRadius: borderRadius ?? BorderRadius.circular(4),
       ),
       child: ClipRRect(
@@ -106,7 +106,7 @@ class CircularProgress extends StatelessWidget {
           CircularProgressIndicator(
             value: value.clamp(0.0, 1.0),
             strokeWidth: strokeWidth,
-            backgroundColor: backgroundColor ?? theme.primaryColor.withOpacity(0.2),
+            backgroundColor: backgroundColor ?? theme.primaryColor.withValues(alpha: 0.2),
             valueColor: AlwaysStoppedAnimation<Color>(
               valueColor ?? theme.primaryColor,
             ),

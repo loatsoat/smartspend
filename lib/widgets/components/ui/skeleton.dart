@@ -70,7 +70,7 @@ class _CustomSkeletonState extends State<CustomSkeleton>
     final theme = Theme.of(context);
     final baseColor = widget.baseColor ?? theme.colorScheme.surface;
     final highlightColor = widget.highlightColor ?? 
-        theme.colorScheme.onSurface.withOpacity(0.1);
+        theme.colorScheme.onSurface.withValues(alpha: 0.1);
 
     return AnimatedBuilder(
       animation: _animation,
