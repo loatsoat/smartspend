@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../models/budget_models.dart';
+import '../../../widgets/components/ui/input.dart';
 import 'widgets/budget_header.dart';
 import 'widgets/circular_budget_chart.dart';
-import 'widgets/category_card.dart';
 import 'widgets/bottom_navigation.dart';
 import 'widgets/budget_animated_background.dart';
+import '../bank/widgets/floating_connect_card.dart';
 import '../overview/wallet_overview_screen.dart';
 import 'category_manager.dart';
 
@@ -18,11 +19,46 @@ class BudgetApp extends StatefulWidget {
 class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
   // State variables
   String activeTab = 'overview';
+  double totalBudget = 1000; // Total budget amount
   List<Transaction> transactions = [];
   Map<String, CategoryData> categories = Map.from(defaultCategories);
   List<String> expandedCategories = [];
   bool isEditingBudgets = false;
   Map<String, String> tempBudgetValues = {};
+  
+  // Sample bank transactions for the floating connect card
+  List<Transaction> bankTransactions = [
+    Transaction(
+      id: '1',
+      type: TransactionType.expense,
+      amount: 45.99,
+      category: 'Groceries',
+      categoryKey: 'food',
+      note: 'Weekly groceries',
+      date: DateTime.now(),
+      merchant: 'Whole Foods Market',
+    ),
+    Transaction(
+      id: '2',
+      type: TransactionType.expense,
+      amount: 32.50,
+      category: 'Transport',
+      categoryKey: 'transport',
+      note: 'Gas',
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      merchant: 'Shell Station',
+    ),
+    Transaction(
+      id: '3',
+      type: TransactionType.expense,
+      amount: 120.00,
+      category: 'Entertainment',
+      categoryKey: 'entertainment',
+      note: 'Movie tickets',
+      date: DateTime.now().subtract(const Duration(days: 2)),
+      merchant: 'Cinema ABC',
+    ),
+  ];
 
   // Budget data
   Map<String, Map<String, SubcategoryBudget>> categoryBudgets = {
@@ -35,9 +71,6 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
 
   // Animation controller
   late AnimationController _rotationController;
-
-  // Add a mutable budget variable at the top of _BudgetAppState
-  double manualBudget = 1000.0;
 
   @override
   void initState() {
@@ -55,8 +88,6 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
   }
 
   // Calculations
-  double get totalBudget => manualBudget;
-
   double get totalSpent {
     double spent = 0;
     categoryBudgets.forEach((_, subcats) {
@@ -123,6 +154,57 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
                 onTabChanged: (tab) => setState(() => activeTab = tab),
               ),
             ),
+
+            // Floating Connect Card Button
+            FloatingConnectCard(
+              transactions: bankTransactions,
+              onCardConnected: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Bank card connected successfully!'),
+                    backgroundColor: Color(0xFF4CAF50),
+                  ),
+                );
+              },
+              onTransactionAction: (transaction, isAccepted) {
+                setState(() {
+                  if (isAccepted) {
+                    // Save transaction - add to the transactions list
+                    transactions.add(transaction);
+                    
+                    // Update budget spent amount
+                    final categoryKey = transaction.categoryKey;
+                    if (categoryBudgets.containsKey(categoryKey)) {
+                      final subcategory = transaction.category;
+                      if (categoryBudgets[categoryKey]!.containsKey(subcategory)) {
+                        categoryBudgets[categoryKey]![subcategory]!.spent += transaction.amount;
+                      } else {
+                        // Create new subcategory if it doesn't exist
+                        categoryBudgets[categoryKey]![subcategory] = SubcategoryBudget(
+                          budgeted: 0,
+                          spent: transaction.amount,
+                        );
+                      }
+                    }
+                    
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Transaction saved: ${transaction.merchant}'),
+                        backgroundColor: const Color(0xFF4CAF50),
+                      ),
+                    );
+                  } else {
+                    // Edit transaction - show edit dialog
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Edit transaction: ${transaction.merchant}'),
+                        backgroundColor: const Color(0xFFFF9800),
+                      ),
+                    );
+                  }
+                });
+              },
+            ),
           ],
         ),
       ),
@@ -139,17 +221,7 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
             totalSpent: totalSpent,
             budgetLeft: budgetLeft,
             budgetPercentage: budgetPercentage,
-            onBudgetTap: () {
-              showEditBudgetDialog(
-                context,
-                manualBudget,
-                (newBudget) {
-                  setState(() {
-                    manualBudget = newBudget;
-                  });
-                },
-              );
-            },
+            onBudgetTap: _showEditBudgetDialog,
           ),
           const SizedBox(height: 24),
           _buildCategoriesList(),
@@ -165,13 +237,27 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Categories',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Categories',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '€${totalSpent.toStringAsFixed(0)} / €${totalBudget.toStringAsFixed(0)} spent',
+                  style: const TextStyle(
+                    color: Color(0xFF00F5FF),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
             ),
             if (isEditingBudgets)
               IconButton(
@@ -196,23 +282,106 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
 
           if (categoryData == null) return const SizedBox.shrink();
 
-          return CategoryCard(
-            categoryKey: categoryKey,
-            categoryData: categoryData,
-            subcategories: subcategories,
-            isExpanded: expandedCategories.contains(categoryKey),
-            isEditingBudgets: isEditingBudgets,
-            onTap: () {
-              setState(() {
-                if (expandedCategories.contains(categoryKey)) {
-                  expandedCategories.remove(categoryKey);
-                } else {
-                  expandedCategories.add(categoryKey);
-                }
-              });
-            },
-            onEditCategory: _showEditCategoryDialog,
-            buildSubcategoryItem: _buildSubcategoryItem,
+          final isExpanded = expandedCategories.contains(categoryKey);
+          final categorySpent = subcategories.values.fold<double>(0.0, (sum, b) => sum + b.spent);
+          final categoryBudgeted = subcategories.values.fold<double>(0.0, (sum, b) => sum + b.budgeted); // ADD THIS LINE
+
+          return Container(
+            margin: const EdgeInsets.only(bottom: 16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              gradient: LinearGradient(
+                colors: [
+                  const Color(0xFF1A1F3A).withValues(alpha:0.85),
+                  const Color(0xFF2A2F4A).withValues(alpha:0.6),
+                ],
+              ),
+              border: Border.all(color: categoryData.solidColor.withValues(alpha:0.25)),
+            ),
+            child: Column(
+              children: [
+                // Header
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      if (isExpanded) {
+                        expandedCategories.remove(categoryKey);
+                      } else {
+                        expandedCategories.add(categoryKey);
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(14.0),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: categoryData.solidColor.withValues(alpha:0.18),
+                          ),
+                          child: Center(
+                            child: Text(categoryData.icon, style: const TextStyle(fontSize: 20)),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                categoryData.name,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                '€${categorySpent.toStringAsFixed(0)} / €${categoryBudgeted.toStringAsFixed(0)}', // CHANGE THIS LINE
+                                style: TextStyle(
+                                  color: categorySpent > categoryBudgeted ? Colors.red : categoryData.solidColor, // CHANGE THIS LINE
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (isEditingBudgets)
+                          IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white70),
+                            onPressed: () => _showEditCategoryDialog(categoryKey, categoryData),
+                          ),
+                        Icon(
+                          isExpanded ? Icons.expand_less : Icons.expand_more,
+                          color: Colors.white70,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Subcategories
+                if (isExpanded)
+                  Column(
+                    children: [
+                      for (final subEntry in subcategories.entries)
+                        _buildSubcategoryItem(subEntry.key, subEntry.value, categoryData.solidColor),
+                      if (subcategories.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Text(
+                            'No subcategories.',
+                            style: TextStyle(color: Colors.white.withValues(alpha:0.6)),
+                          ),
+                        ),
+                    ],
+                  ),
+              ],
+            ),
           );
         }),
       ],
@@ -232,7 +401,7 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
         border: Border(
-          top: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+          top: BorderSide(color: Colors.white.withValues(alpha:0.1)),
         ),
       ),
       child: Row(
@@ -251,7 +420,7 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
                   height: 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
-                    color: Colors.white.withValues(alpha: 0.1),
+                    color: Colors.white.withValues(alpha:0.1),
                   ),
                   child: FractionallySizedBox(
                     alignment: Alignment.centerLeft,
@@ -278,6 +447,97 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  void _showEditBudgetDialog() {
+    final controller = TextEditingController(text: totalBudget.toStringAsFixed(0));
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF1A1F3A),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+              color: const Color(0xFF00F5FF).withValues(alpha: 0.3),
+            ),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.account_balance_wallet, color: Color(0xFF00F5FF), size: 24),
+              SizedBox(width: 12),
+              Text(
+                'Edit Total Budget',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Set your monthly budget amount',
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
+              ),
+              const SizedBox(height: 16),
+              CustomInput(
+                controller: controller,
+                label: 'Budget Amount',
+                placeholder: 'Enter amount',
+                keyboardType: TextInputType.number,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text(
+                'Cancel',
+                style: TextStyle(color: Colors.white70),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                final newBudget = double.tryParse(controller.text);
+                if (newBudget != null && newBudget > 0) {
+                  setState(() {
+                    totalBudget = newBudget;
+                  });
+                  Navigator.of(context).pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Budget updated to €${newBudget.toStringAsFixed(0)}'),
+                      backgroundColor: const Color(0xFF00F5FF),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Please enter a valid amount'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF00F5FF),
+                foregroundColor: const Color(0xFF1A1F3A),
+              ),
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
     );
   }
 

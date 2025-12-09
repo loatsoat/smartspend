@@ -304,7 +304,7 @@ Widget _buildStatusBadge(double percentage) {
 
 ## 📝 Next Steps
 
-1. **Fix deprecation warnings** in UI components (`.withOpacity()` → `.withValues()`)
+1. **Fix deprecation warnings** in UI components (`.withValues(alpha:)` → `.withValues()`)
 2. **Integrate components** into budget app
 3. **Create examples** for each component
 4. **Document usage** patterns

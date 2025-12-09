@@ -51,7 +51,7 @@ class CategoryData {
 // Subcategory Budget Model
 class SubcategoryBudget {
   final double budgeted;
-  final double spent;
+  double spent;
 
   SubcategoryBudget({required this.budgeted, required this.spent});
 }

@@ -23,7 +23,7 @@ class CircularBudgetChart extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(32),
         border: Border.all(
-          color: const Color(0xFF00F5FF).withOpacity(0.3),
+          color: const Color(0xFF00F5FF).withValues(alpha:0.3),
         ),
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
@@ -35,7 +35,7 @@ class CircularBudgetChart extends StatelessWidget {
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF00F5FF).withOpacity(0.1),
+            color: const Color(0xFF00F5FF).withValues(alpha:0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -155,7 +155,7 @@ class CircularBudgetChart extends StatelessWidget {
               const SizedBox(width: 4),
               Icon(
                 Icons.edit,
-                color: color.withOpacity(0.7),
+                color: color.withValues(alpha:0.7),
                 size: 16,
               ),
             ],

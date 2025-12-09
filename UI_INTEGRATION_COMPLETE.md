@@ -3,7 +3,7 @@
 ## 🎉 What Was Done
 
 ### **1. Fixed All Deprecation Warnings** ✅
-Replaced `.withOpacity()` with `.withValues(alpha: ...)` in:
+Replaced `.withValues(alpha:)` with `.withValues(alpha: ...)` in:
 - ✅ `button.dart` - No warnings
 - ✅ `input.dart` - Fixed 2 warnings
 - ✅ `card.dart` - Fixed 2 warnings
