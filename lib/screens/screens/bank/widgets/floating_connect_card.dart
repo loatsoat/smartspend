@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../models/budget_models.dart';
-import '../bank_connection_screen.dart';
 
 class FloatingConnectCard extends StatelessWidget {
   final List<Transaction> transactions;
@@ -32,7 +31,7 @@ class FloatingConnectCard extends StatelessWidget {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: const Color(0xFFC77FE8).withOpacity(0.4),
+                  color: const Color(0xFFC77FE8).withValues(alpha: 0.4),
                   blurRadius: 15,
                   offset: const Offset(0, 4),
                 ),
@@ -71,7 +70,7 @@ class FloatingConnectCard extends StatelessWidget {
                         colors: [Color(0xFF2A3F5F), Color(0xFF1A2A3F)],
                       ),
                       border: Border.all(
-                        color: const Color(0xFFD8A5FF).withOpacity(0.2),
+                        color: const Color(0xFFD8A5FF).withValues(alpha: 0.2),
                         width: 1.5,
                       ),
                     ),
@@ -128,7 +127,7 @@ class FloatingConnectCard extends StatelessWidget {
                               'Link your bank card to automatically import transactions',
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: Colors.white.withOpacity(0.7),
+                                color: Colors.white.withValues(alpha: 0.7),
                                 fontSize: 13,
                               ),
                             ),
@@ -152,14 +151,14 @@ class FloatingConnectCard extends StatelessWidget {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: const Color(0xFF1A2A3F).withOpacity(0.8),
+                                    color: const Color(0xFF1A2A3F).withValues(alpha: 0.8),
                                     borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(color: Colors.white.withOpacity(0.1)),
+                                    border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
                                   ),
                                   child: Text(
                                     '•••• •••• •••• ••••',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.5),
+                                      color: Colors.white.withValues(alpha: 0.5),
                                       fontSize: 14,
                                       letterSpacing: 2,
                                     ),
@@ -284,7 +283,7 @@ class FloatingConnectCard extends StatelessWidget {
                           child: Text(
                             'Swipe left to edit • Swipe right to accept',
                             style: TextStyle(
-                              color: Colors.white.withOpacity(0.6),
+                              color: Colors.white.withValues(alpha: 0.6),
                               fontSize: 12,
                             ),
                             textAlign: TextAlign.center,
@@ -334,7 +333,7 @@ class _SwipeDeckState extends State<_SwipeDeck> {
               const SizedBox(height: 12),
               Text(
                 'All transactions reviewed',
-                style: TextStyle(color: Colors.white.withOpacity(0.8)),
+                style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
               ),
             ],
           ),
@@ -422,10 +421,10 @@ class _TransactionCard extends StatelessWidget {
         gradient: const LinearGradient(
           colors: [Color(0xFF1A2A3F), Color(0xFF2A3F5F)],
         ),
-        border: Border.all(color: const Color(0xFFD8A5FF).withOpacity(0.2)),
+        border: Border.all(color: const Color(0xFFD8A5FF).withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFD8A5FF).withOpacity(0.1),
+            color: const Color(0xFFD8A5FF).withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, 4),
           ),
@@ -443,7 +442,7 @@ class _TransactionCard extends StatelessWidget {
                 height: 50,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: const Color(0xFFD8A5FF).withOpacity(0.3),
+                  color: const Color(0xFFD8A5FF).withValues(alpha: 0.3),
                 ),
                 child: const Icon(Icons.restaurant, color: Color(0xFFD8A5FF), size: 24),
               ),
@@ -463,7 +462,7 @@ class _TransactionCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFD8A5FF).withOpacity(0.2),
+              color: const Color(0xFFD8A5FF).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
@@ -485,7 +484,7 @@ class _TransactionCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TextStyle(color: Colors.white.withOpacity(0.6), fontSize: 11)),
+        Text(label, style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 11)),
         const SizedBox(height: 4),
         Text(value, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500)),
       ],

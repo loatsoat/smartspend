@@ -1,154 +1,151 @@
 import 'package:flutter/material.dart';
-import '../../../widgets/widgets/animated_background.dart';
 
-class HomeScreen extends StatefulWidget {
-  final VoidCallback onLogout;
-
-  const HomeScreen({super.key, required this.onLogout});
+class OverviewListScreen extends StatefulWidget {
+  const OverviewListScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<OverviewListScreen> createState() => _OverviewListScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _currentTab = 0;
+class _OverviewListScreenState extends State<OverviewListScreen> {
+  final String _currentMonth = 'November 2025';
+  final int _transactionCount = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          const AnimatedBackground(),
-          SafeArea(
+      backgroundColor: const Color(0xFF0A0E1A),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFF2A3F5F),
+              Color(0xFF1A1F33),
+              Color(0xFF0A0E1A),
+            ],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 100),
             child: Column(
               children: [
-                // Header
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: widget.onLogout,
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: const Icon(
-                            Icons.settings,
-                            color: Colors.white,
-                            size: 24,
-                          ),
-                        ),
-                      ),
-                      const Text(
-                        'Personal Wallet',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(width: 40),
-                    ],
-                  ),
-                ),
-                // Content
-                Expanded(
-                  child: _currentTab == 0
-                      ? _buildOverviewTab()
-                      : _buildBudgetTab(),
-                ),
+                _buildStatusBar(),
+                _buildHeader(),
+                _buildTabSelector(),
+                const SizedBox(height: 24),
+                _buildMonthSelector(),
+                const SizedBox(height: 24),
+                _buildTransactionsList(),
               ],
             ),
           ),
-        ],
+        ),
       ),
-      bottomNavigationBar: _buildBottomNav(),
+      floatingActionButton: _buildFloatingActionButton(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      bottomNavigationBar: _buildBottomNavigation(),
     );
   }
 
-  Widget _buildOverviewTab() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+  Widget _buildStatusBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            '23:34 Tuesday 4 Nov.',
+            style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500),
+          ),
+          Row(
+            children: [
+              const Text('100%', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.w500)),
+              const SizedBox(width: 8),
+              Container(
+                width: 24,
+                height: 12,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 1),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+                child: Container(
+                  margin: const EdgeInsets.all(1),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF00F5FF),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Row(
         children: [
           Container(
-            width: 80,
-            height: 80,
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [Color(0xFF00F5FF), Color(0xFF00D4FF), Color(0xFF00B8FF)],
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.settings, color: Colors.white, size: 24),
+          ),
+          const Expanded(
+            child: Center(
+              child: Text(
+                'Personal Wallet',
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFF00F5FF).withValues(alpha: 0.4),
-                  blurRadius: 40,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.dashboard,
-              size: 40,
-              color: Colors.white,
             ),
           ),
-          const SizedBox(height: 24),
-          const Text(
-            'Overview Tab',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
+          const SizedBox(width: 40),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTabSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A3F5F).withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(color: Colors.transparent, borderRadius: BorderRadius.circular(20)),
+              child: const Center(
+                child: Text('OVERVIEW', style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w600)),
+              ),
             ),
           ),
-          const SizedBox(height: 8),
-          Text(
-            'Full SmartSpend features coming soon!',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withValues(alpha: 0.6),
-            ),
-          ),
-          const SizedBox(height: 32),
-          Container(
-            padding: const EdgeInsets.all(24),
-            margin: const EdgeInsets.symmetric(horizontal: 24),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF395587).withValues(alpha: 0.3),
-                  const Color(0xFF4a6aa0).withValues(alpha: 0.2),
+          Expanded(
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFF00F5FF), Color(0xFF00D4FF)]),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(color: const Color(0xFF00F5FF).withValues(alpha: 0.3), blurRadius: 10, offset: const Offset(0, 2)),
                 ],
               ),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.2),
+              child: const Center(
+                child: Text('LIST', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
               ),
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  '€0.00',
-                  style: TextStyle(
-                    fontSize: 36,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Total Balance',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.6),
-                  ),
-                ),
-              ],
             ),
           ),
         ],
@@ -156,56 +153,88 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBudgetTab() {
-    return Center(
+  Widget _buildMonthSelector() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A3F5F).withValues(alpha: 0.6),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF00F5FF).withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _roundIconButton(Icons.chevron_left, const Color(0xFF00F5FF)),
+          Column(
+            children: [
+              Text(
+                _currentMonth,
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    '$_transactionCount TRANSACTIONS',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12, fontWeight: FontWeight.w500),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFFFF6B9D), shape: BoxShape.circle)),
+                ],
+              ),
+            ],
+          ),
+          _roundIconButton(Icons.chevron_right, const Color(0xFF00F5FF)),
+        ],
+      ),
+    );
+  }
+
+  Widget _roundIconButton(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+      child: Icon(icon, color: color, size: 20),
+    );
+  }
+
+  Widget _buildTransactionsList() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1F33).withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              gradient: const LinearGradient(
-                colors: [Color(0xFFFF6B9D), Color(0xFFFE5196), Color(0xFFFF3D8F)],
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: const Color(0xFFFF6B9D).withValues(alpha: 0.4),
-                  blurRadius: 40,
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: const Icon(
-              Icons.account_balance_wallet,
-              size: 40,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Budget Tab',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Budget management features',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withValues(alpha: 0.6),
-            ),
-          ),
+          Text('No transactions this month', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 12),
+          Text('Tap the + button to add one', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14)),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNav() {
+  Widget _buildFloatingActionButton() {
+    return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(colors: [Color(0xFFFF6B9D), Color(0xFFFF3D8F)]),
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(color: const Color(0xFFFF6B9D).withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 8)),
+        ],
+      ),
+      child: const Icon(Icons.add, color: Colors.white, size: 28),
+    );
+  }
+
+  Widget _buildBottomNavigation() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -216,91 +245,42 @@ class _HomeScreenState extends State<HomeScreen> {
             const Color(0xFF0A0E1A).withValues(alpha: 0.98),
           ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildNavItem(
-                index: 0,
-                icon: Icons.dashboard,
-                label: 'OVERVIEW',
-                gradient: const LinearGradient(
-                  colors: [Color(0xFF00F5FF), Color(0xFF00B8FF)],
-                ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(colors: [Color(0xFF00F5FF), Color(0xFF00D4FF)]),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.visibility, color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text('Overview', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
+                ],
               ),
-              _buildNavItem(
-                index: 1,
-                icon: Icons.account_balance_wallet,
-                label: 'BUDGET',
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B9D), Color(0xFFFF3D8F)],
-                ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.1), shape: BoxShape.circle),
+                    child: const Icon(Icons.calendar_month, color: Colors.white70, size: 24),
+                  ),
+                  const SizedBox(height: 8),
+                  Text('Budget', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 12, fontWeight: FontWeight.w500)),
+                ],
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem({
-    required int index,
-    required IconData icon,
-    required String label,
-    required Gradient gradient,
-  }) {
-    final isActive = _currentTab == index;
-
-    return GestureDetector(
-      onTap: () => setState(() => _currentTab = index),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        decoration: BoxDecoration(
-          gradient: isActive ? gradient : null,
-          color: isActive ? null : Colors.transparent,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: isActive
-              ? [
-                  BoxShadow(
-                    color: gradient.colors.first.withValues(alpha: 0.4),
-                    blurRadius: 20,
-                    spreadRadius: 0,
-                  ),
-                ]
-              : [],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 20,
-            ),
-            if (isActive) ...[
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
-                ),
-              ),
-            ],
-          ],
         ),
       ),
     );
