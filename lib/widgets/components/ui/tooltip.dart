@@ -67,8 +67,6 @@ class RichTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
     return GestureDetector(
       onTap: () {
         _showTooltipDialog(context);
@@ -106,7 +104,7 @@ class RichTooltip extends StatelessWidget {
                   borderRadius: borderRadius ?? BorderRadius.circular(8),
                   boxShadow: boxShadow ?? [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),

@@ -67,13 +67,13 @@ class CustomTextArea extends StatelessWidget {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(
-                color: theme.dividerColor.withOpacity(0.1),
+                color: theme.dividerColor.withValues(alpha: 0.1),
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6),
               borderSide: BorderSide(
-                color: theme.dividerColor.withOpacity(0.1),
+                color: theme.dividerColor.withValues(alpha: 0.1),
               ),
             ),
             focusedBorder: OutlineInputBorder(

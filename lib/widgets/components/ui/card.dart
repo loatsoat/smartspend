@@ -30,7 +30,7 @@ class CustomCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: borderRadius ?? BorderRadius.circular(12),
           side: BorderSide(
-            color: theme.dividerColor.withOpacity(0.1),
+            color: theme.dividerColor.withValues(alpha: 0.1),
           ),
         ),
         child: Padding(
@@ -125,7 +125,7 @@ class CardDescription extends StatelessWidget {
     return Text(
       text,
       style: style ?? theme.textTheme.bodyMedium?.copyWith(
-        color: theme.colorScheme.onSurface.withOpacity(0.6),
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
       ),
     );
   }

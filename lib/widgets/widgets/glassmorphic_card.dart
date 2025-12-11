@@ -19,12 +19,12 @@ class GlassmorphicCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
-          color: Colors.white.withOpacity(0.2),
+          color: Colors.white.withValues(alpha: 0.2),
           width: 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFF395587).withOpacity(0.25),
+            color: const Color(0xFF395587).withValues(alpha: 0.25),
             blurRadius: 50,
             spreadRadius: 0,
           ),
@@ -40,9 +40,9 @@ class GlassmorphicCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  const Color(0xFF395587).withOpacity(0.15),
-                  const Color(0xFF4a6aa0).withOpacity(0.1),
-                  const Color(0xFF1A1F3A).withOpacity(0.95),
+                  const Color(0xFF395587).withValues(alpha: 0.15),
+                  const Color(0xFF4a6aa0).withValues(alpha: 0.1),
+                  const Color(0xFF1A1F3A).withValues(alpha: 0.95),
                 ],
               ),
             ),

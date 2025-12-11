@@ -74,8 +74,8 @@ class LavaLampPainter extends CustomPainter {
       final paint = Paint()
         ..shader = RadialGradient(
           colors: [
-            baseColor.withOpacity(0.15 + i * 0.05),
-            baseColor.withOpacity(0.05),
+            baseColor.withValues(alpha: 0.15 + i * 0.05),
+            baseColor.withValues(alpha: 0.05),
             Colors.transparent,
           ],
           stops: const [0.0, 0.5, 1.0],
