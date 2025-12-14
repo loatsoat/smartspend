@@ -411,239 +411,76 @@ class _WalletOverviewContentState extends State<WalletOverviewContent>
       padding: const EdgeInsets.all(20),
       child: Column(
         children: [
-          _buildPersonalWalletCard(),
-          const SizedBox(height: 20),
-          _buildAddExpenseWidget(),
-          const SizedBox(height: 20),
+          // Reuse only the month selector + list parts from OverviewListScreen
+          _buildMonthSelectorLite(),
+          const SizedBox(height: 24),
+          _buildTransactionsListLite(),
         ],
       ),
     );
   }
 
-  Widget _buildAddExpenseWidget() {
+  Widget _buildMonthSelectorLite() {
     return Container(
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A3B5C).withValues(alpha: 0.8),
+        color: const Color(0xFF2A3F5F).withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF00F5FF).withValues(alpha: 0.1),
-            blurRadius: 20,
-            spreadRadius: 0,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: const Color(0xFF00F5FF).withValues(alpha: 0.3)),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Add New Expense',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.9),
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          _roundIconButton(Icons.chevron_left, const Color(0xFF00F5FF)),
+          Column(
+            children: [
+              const Text(
+                'November 2025',
+                style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
               ),
-            ),
-            const SizedBox(height: 24),
-            _buildInputField(
-              label: 'Amount',
-              hint: '0.00 €',
-              icon: Icons.euro,
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 16),
-            _buildInputField(
-              label: 'Description',
-              hint: 'What did you spend on?',
-              icon: Icons.description,
-            ),
-            const SizedBox(height: 16),
-            _buildCategorySelector(),
-            const SizedBox(height: 24),
-            Container(
-              width: double.infinity,
-              height: 50,
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [Color(0xFFFF6B9D), Color(0xFFFF4081)],
-                ),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFFF6B9D).withValues(alpha: 0.3),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  Text(
+                    '0 TRANSACTIONS',
+                    style: TextStyle(color: Colors.white.withValues(alpha: 0.6), fontSize: 12, fontWeight: FontWeight.w500),
                   ),
+                  const SizedBox(width: 8),
+                  Container(width: 6, height: 6, decoration: const BoxDecoration(color: Color(0xFFFF6B9D), shape: BoxShape.circle)),
                 ],
               ),
-              child: ElevatedButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Expense added successfully!'),
-                      backgroundColor: Color(0xFF4CAF50),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: const Text(
-                  'Add Expense',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
+            ],
+          ),
+          _roundIconButton(Icons.chevron_right, const Color(0xFF00F5FF)),
+        ],
       ),
     );
   }
 
-  Widget _buildInputField({
-    required String label,
-    required String hint,
-    required IconData icon,
-    TextInputType? keyboardType,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1A1F3A).withValues(alpha: 0.5),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
-          ),
-          child: TextField(
-            keyboardType: keyboardType,
-            style: const TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                color: Colors.white.withValues(alpha: 0.4),
-              ),
-              prefixIcon: Icon(
-                icon,
-                color: Colors.white.withValues(alpha: 0.6),
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.all(16),
-            ),
-          ),
-        ),
-      ],
+  Widget _buildTransactionsListLite() {
+    return Container(
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1F33).withValues(alpha: 0.8),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('No transactions this month', style: TextStyle(color: Colors.white.withValues(alpha: 0.7), fontSize: 18, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 12),
+          Text('Tap the + button to add one', style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 14)),
+        ],
+      ),
     );
   }
 
-  Widget _buildCategorySelector() {
-    final categories = [
-      {
-        'name': 'Food & Dining',
-        'icon': Icons.restaurant,
-        'color': const Color(0xFFFF6B9D)
-      },
-      {
-        'name': 'Transportation',
-        'icon': Icons.directions_car,
-        'color': const Color(0xFFFF9800)
-      },
-      {
-        'name': 'Shopping',
-        'icon': Icons.shopping_bag,
-        'color': const Color(0xFF9C27B0)
-      },
-      {
-        'name': 'Entertainment',
-        'icon': Icons.movie,
-        'color': const Color(0xFF2196F3)
-      },
-      {
-        'name': 'Bills',
-        'icon': Icons.receipt,
-        'color': const Color(0xFFF44336)
-      },
-      {
-        'name': 'Health',
-        'icon': Icons.local_hospital,
-        'color': const Color(0xFF4CAF50)
-      },
-    ];
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Category',
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.8),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 12),
-        Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: categories.map((category) {
-            return GestureDetector(
-              onTap: () {
-                // Handle category selection
-              },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFF1A1F3A).withValues(alpha: 0.5),
-                  borderRadius: BorderRadius.circular(20),
-                  border:
-                      Border.all(color: Colors.white.withValues(alpha: 0.1)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      category['icon'] as IconData,
-                      color: category['color'] as Color,
-                      size: 18,
-                    ),
-                    const SizedBox(width: 8),
-                    Text(
-                      category['name'] as String,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
-        ),
-      ],
+  Widget _roundIconButton(IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(color: color.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(8)),
+      child: Icon(icon, color: color, size: 20),
     );
   }
 }
