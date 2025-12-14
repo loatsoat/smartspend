@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../services/simple_auth_manager.dart';
 import '../../../widgets/widgets/glassmorphic_card.dart';
 import '../../../widgets/widgets/gradient_button.dart';
 import '../../../widgets/widgets/custom_text_field.dart';
@@ -51,7 +51,8 @@ class _SignupScreenState extends State<SignupScreen> {
 
     setState(() => _isLoading = true);
 
-    final success = await AuthService().signup(
+    final authManager = SimpleAuthManager.instance;
+    final success = await authManager.signup(
       _usernameController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text,
@@ -65,7 +66,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Email already exists'),
+            content: Text('Signup failed. Please try again.'),
             backgroundColor: Colors.red,
           ),
         );

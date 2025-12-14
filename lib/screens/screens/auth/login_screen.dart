@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../services/simple_auth_manager.dart';
 import '../../../widgets/widgets/glassmorphic_card.dart';
 import '../../../widgets/widgets/gradient_button.dart';
 import '../../../widgets/widgets/custom_text_field.dart';
@@ -52,7 +52,8 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
 
     setState(() => _isLoading = true);
 
-    final success = await AuthService().login(
+    final authManager = SimpleAuthManager.instance;
+    final success = await authManager.login(
       _emailController.text.trim(),
       _passwordController.text,
     );

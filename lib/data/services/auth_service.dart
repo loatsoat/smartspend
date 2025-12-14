@@ -13,6 +13,12 @@ class AuthService {
   bool get isAuthenticated => _isAuthenticated;
   String? get currentUser => _currentUser;
 
+  // Restore session from persistent storage
+  void restoreSession(String user) {
+    _isAuthenticated = true;
+    _currentUser = user;
+  }
+
   // Mock login method
   Future<bool> login(String email, String password) async {
     // Simulate network delay
