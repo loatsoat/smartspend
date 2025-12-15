@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/budget_models.dart';
+import '../../../services/simple_auth_manager.dart';
 import '../../../widgets/components/ui/input.dart';
 import 'widgets/budget_header.dart';
 import 'widgets/circular_budget_chart.dart';
@@ -101,9 +102,54 @@ class _BudgetAppState extends State<BudgetApp> with TickerProviderStateMixin {
   double get budgetLeft => totalBudget - totalSpent;
   double get budgetPercentage => (totalSpent / totalBudget) * 100;
 
+  void _handleLogout() async {
+    final shouldLogout = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLogout == true) {
+      SimpleAuthManager.instance.logout();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'SmartSpend',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            onPressed: _handleLogout,
+            icon: const Icon(
+              Icons.logout,
+              color: Colors.white,
+            ),
+            tooltip: 'Logout',
+          ),
+        ],
+      ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
